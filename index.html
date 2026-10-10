@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V-Phục Remix - Phối Trang Phục Truyền Thống Gen Z</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- html2canvas for Lookbook capture -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --hue-primary: #8C1D24; /* Đỏ son cung đình */
+      --hue-gold: #C6923D;    /* Vàng hoàng kim */
+      --hue-jade: #2A6A58;    /* Xanh ngọc lục */
+      --hue-ink: #1F2421;     /* Mực mun */
+      --hue-paper: #FDFBF7;   /* Giấy dó / Bạch kim */
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8F5EE;
+      color: #242220;
+      background-image: 
+        radial-gradient(#C6923D15 1px, transparent 1px),
+        radial-gradient(#8C1D2410 1px, #F8F5EE 1px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+    }
+
+    .font-heritage {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .font-royal {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Custom Glassmorphism */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(198, 146, 61, 0.25);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(220, 212, 198, 0.7);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #EFE9DE;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C6923D;
+      border-radius: 999px;
+    }
+
+    /* Dragging Visuals */
+    .draggable-item {
+      cursor: grab;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .draggable-item:active {
+      cursor: grabbing;
+      transform: scale(0.96);
+    }
+
+    .drop-active {
+      outline: 2px dashed #C6923D !important;
+      background-color: rgba(198, 146, 61, 0.08) !important;
+    }
+
+    /* Subtle shimmer */
+    @keyframes goldGlow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(198, 146, 61, 0.3)); }
+      50% { filter: drop-shadow(0 0 10px rgba(198, 146, 61, 0.7)); }
+    }
+    .gold-glow {
+      animation: goldGlow 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#C6923D] selection:text-white pb-10">
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-[#C6923D]/30 shadow-sm px-4 lg:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#C6923D] flex items-center justify-center text-white text-xl shadow-md font-royal font-black">
+          VP
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-heritage font-extrabold text-[#8C1D24] tracking-tight">V-Phục Remix</h1>
+            <span class="text-xs px-2 py-0.5 rounded-full font-bold bg-[#C6923D]/15 text-[#8C1D24] border border-[#C6923D]/40">Audition Gen Z</span>
+          </div>
+          <p class="text-xs text-neutral-600 hidden sm:block">Phòng Thí Nghiệm Phối Cổ Phục & Phong Cách Đương Đại</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 md:space-x-3">
+        <!-- Preset Quick Picks -->
+        <button onclick="openPresetsModal()" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100 flex items-center gap-1.5 transition">
+          <i class="ph-bold ph-sparkle text-amber-600"></i>
+          <span>Gợi ý mẫu</span>
+        </button>
+
+        <!-- Compare View Switch -->
+        <button onclick="toggleCompareMode()" id="btnCompareToggle" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold bg-white text-neutral-700 border border-neutral-300 hover:border-[#8C1D24] flex items-center gap-1.5 transition">
+          <i class="ph-bold ph-columns text-neutral-600"></i>
+          <span id="compareToggleText">So sánh 2 bản</span>
+        </button>
+
+        <!-- Gemini API Key configuration button -->
+        <button onclick="openSettingsModal()" class="p-2 rounded-lg text-neutral-600 hover:text-[#8C1D24] hover:bg-neutral-100 border border-transparent hover:border-neutral-200 transition" title="Cài đặt AI & API Key">
+          <i class="ph ph-gear text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 pt-6 w-full flex-1">
+    
+    <!-- Context Banner: Event and Aesthetic Selection -->
+    <div class="glass-card rounded-2xl p-4 mb-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#C6923D]/20">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs font-bold uppercase tracking-wider text-[#8C1D24] flex items-center gap-1">
+          <i class="ph-fill ph-map-pin"></i> Bối Cảnh Sự Kiện:
+        </span>
+        <div class="flex flex-wrap gap-2" id="eventSelector">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 border-t md:border-t-0 pt-2 md:pt-0">
+        <button onclick="randomizeOutfit()" class="px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold bg-[#8C1D24]/10 text-[#8C1D24] hover:bg-[#8C1D24] hover:text-white transition flex items-center gap-1.5 border border-[#8C1D24]/20 shadow-sm">
+          <i class="ph-bold ph-shuffle"></i> Ngẫu hứng (Surprise)
+        </button>
+        <button onclick="resetOutfit()" class="px-3 py-1.5 rounded-xl text-xs md:text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition" title="Đặt lại từ đầu">
+          <i class="ph-bold ph-arrows-counter-clockwise"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN WORKSPACE -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <section class="lg:col-span-5 flex flex-col gap-4">
+        
+        <!-- Avatar Interactive Card -->
+        <div class="glass-card rounded-3xl p-5 shadow-lg border border-[#C6923D]/30 relative overflow-hidden flex flex-col items-center">
+          
+          <!-- Subtle Heritage Ornamental Background Pattern -->
+          <div class="absolute -top-12 -right-12 w-48 h-48 bg-gradient-to-br from-[#C6923D]/10 to-[#8C1D24]/5 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <!-- Avatar Top Controls -->
+          <div class="w-full flex items-center justify-between z-10 mb-3">
+            <!-- Gender Selector -->
+            <div class="bg-neutral-100 p-1 rounded-xl flex items-center border border-neutral-200">
+              <button onclick="setGender('female')" id="btnGenderF" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-[#8C1D24] text-white shadow-sm flex items-center gap-1">
+                <i class="ph-bold ph-gender-female"></i> Nữ
+              </button>
+              <button onclick="setGender('male')" id="btnGenderM" class="px-3 py-1 rounded-lg text-xs font-bold transition text-neutral-600 hover:text-black flex items-center gap-1">
+                <i class="ph-bold ph-gender-male"></i> Nam
+              </button>
+            </div>
+
+            <!-- Pose / Mood Badges -->
+            <div class="flex items-center gap-1.5">
+              <span id="currentEventBadge" class="text-xs px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                Kỷ yếu tốt nghiệp
+              </span>
+            </div>
+          </div>
+
+          <!-- DROP ZONE / INTERACTIVE SVG MANNEQUIN -->
+          <div id="mannequinDropZone" class="w-full max-w-[340px] aspect-[3/4.2] rounded-2xl relative flex items-center justify-center p-2 transition border-2 border-transparent bg-gradient-to-b from-[#F2ECE1]/60 to-[#EAE0D0]/40 overflow-hidden shadow-inner">
+            
+            <!-- SVG MANNEQUIN ENGINE (Layered) -->
+            <svg id="mannequinSvg" viewBox="0 0 320 440" class="w-full h-full drop-shadow-md select-none transition-all duration-300">
+              
+              <!-- DEFINITIONS / PATTERNS / FILTERS -->
+              <defs>
+                <filter id="fabricShadow" x="-10%" y="-10%" width="130%" height="130%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-opacity="0.18"/>
+                </filter>
+                <linearGradient id="skinToneGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#FFE0BD"/>
+                  <stop offset="100%" stop-color="#FCD0A1"/>
+                </linearGradient>
+                <linearGradient id="innerShirtGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#FFFFFF"/>
+                  <stop offset="100%" stop-color="#EDE8DE"/>
+                </linearGradient>
+                <!-- Brocade Pattern Simulation -->
+                <pattern id="cloudPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M0 10 Q 5 5, 10 10 T 20 10" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+                </pattern>
+              </defs>
+
+              <!-- LAYER 0: BASE BODY & MANNEQUIN STAND -->
+              <g id="layer-body">
+                <!-- Pedestal base -->
+                <ellipse cx="160" cy="425" rx="55" ry="8" fill="#D3C7B6" opacity="0.6"/>
+                <!-- Neck -->
+                <rect x="150" y="86" width="20" height="26" rx="4" fill="url(#skinToneGradient)"/>
+                <!-- Head -->
+                <ellipse cx="160" cy="62" rx="26" ry="32" fill="url(#skinToneGradient)"/>
+                <!-- Shoulders & Torso Base -->
+                <path d="M125 106 Q 160 98 195 106 L 205 230 Q 160 236 115 230 Z" fill="#F0E5D4" opacity="0.4"/>
+                <!-- Arms base -->
+                <path d="M125 106 L 100 220 L 115 224 L 132 120 Z" fill="url(#skinToneGradient)"/>
+                <path d="M195 106 L 220 220 L 205 224 L 188 120 Z" fill="url(#skinToneGradient)"/>
+                <!-- Legs base -->
+                <rect x="135" y="240" width="18" height="150" rx="6" fill="url(#skinToneGradient)"/>
+                <rect x="167" y="240" width="18" height="150" rx="6" fill="url(#skinToneGradient)"/>
+              </g>
+
+              <!-- LAYER 1: HAIR / KHĂN ĐÓNG / MẤN (UNDER / OVER) -->
+              <g id="layer-hair">
+                <!-- Hair Female / Male dynamically injected -->
+              </g>
+
+              <!-- LAYER 2: BOTTOM WEAR (QUẦN / VÁY / SHORTS) -->
+              <g id="layer-bottoms" filter="url(#fabricShadow)">
+                <!-- Dynamically rendered -->
+              </g>
+
+              <!-- LAYER 3: INNER SHIRT (ÁO CỔ LỌ / ÁO CÁNH TRẮNG LÓT TRUYỀN THỐNG) -->
+              <g id="layer-inner">
+                <path d="M148 100 L 160 118 L 172 100 L 166 88 L 154 88 Z" fill="url(#innerShirtGrad)" stroke="#D4CCBE" stroke-width="1"/>
+              </g>
+
+              <!-- LAYER 4: MAIN TRADITIONAL ROBE (NGŨ THÂN, NHẬT BÌNH, ÁO TẤC, TỨ THÂN, ÁO DÀI) -->
+              <g id="layer-robe" filter="url(#fabricShadow)">
+                <!-- Dynamically rendered with pattern and selected five-elements hue -->
+              </g>
+
+              <!-- LAYER 5: ACCESSORIES (KIỀNG BẠC, KÍNH RÂM, MẤN, TÚI TOTE) -->
+              <g id="layer-accessories">
+                <!-- Dynamically rendered -->
+              </g>
+
+              <!-- LAYER 6: FOOTWEAR (GUỐC MỘC, SNEAKER, HÀI) -->
+              <g id="layer-shoes">
+                <!-- Dynamically rendered -->
+              </g>
+            </svg>
+
+            <!-- Drag & Drop Hint Overlay -->
+            <div id="dragHint" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center bg-black/40 text-white rounded-2xl opacity-0 transition-opacity">
+              <i class="ph-bold ph-hand-pointing text-4xl mb-2 text-[#C6923D]"></i>
+              <span class="text-sm font-bold tracking-wide">Thả vào đây để phối</span>
+            </div>
+          </div>
+
+          <!-- Active Outfit Summary Chips -->
+          <div class="w-full mt-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-neutral-700" id="currentEquippedBadges">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Bottom Actions: Capture Lookbook Card -->
+          <div class="w-full grid grid-cols-2 gap-2 mt-4">
+            <button onclick="openLookbookModal()" class="w-full py-2.5 rounded-xl font-bold bg-[#8C1D24] text-white hover:bg-[#70161C] transition shadow-md flex items-center justify-center gap-1.5 text-xs md:text-sm">
+              <i class="ph-bold ph-camera"></i> Xuất Thẻ Lookbook
+            </button>
+            <button onclick="saveToComparison()" class="w-full py-2.5 rounded-xl font-bold bg-white text-[#8C1D24] border border-[#8C1D24] hover:bg-neutral-50 transition flex items-center justify-center gap-1.5 text-xs md:text-sm">
+              <i class="ph-bold ph-git-diff"></i> Lưu So Sánh
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Cultural Safety Status Banner -->
+        <div id="safetyBanner" class="rounded-2xl p-4 transition-all duration-300 flex items-start gap-3 border shadow-sm">
+          <!-- Populated by updateSafetyBadge() -->
+        </div>
+
+      </section>
+
+      <section class="lg:col-span-7 flex flex-col gap-5">
+        
+        <!-- Category Tab Navigation -->
+        <div class="glass-card rounded-2xl p-2 shadow-sm flex items-center justify-between border border-[#C6923D]/20 overflow-x-auto">
+          <div class="flex items-center space-x-1" id="tabContainer">
+            <button onclick="switchTab('robe')" id="tab-robe" class="category-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 bg-[#8C1D24] text-white shadow-sm">
+              <i class="ph ph-t-shirt"></i> <span>Áo Cổ Phục</span>
+            </button>
+            <button onclick="switchTab('bottom')" id="tab-bottom" class="category-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 text-neutral-600 hover:text-black">
+              <i class="ph ph-pants"></i> <span>Quần & Váy Mix</span>
+            </button>
+            <button onclick="switchTab('accessory')" id="tab-accessory" class="category-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 text-neutral-600 hover:text-black">
+              <i class="ph ph-sunglasses"></i> <span>Phụ Kiện</span>
+            </button>
+            <button onclick="switchTab('shoes')" id="tab-shoes" class="category-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 text-neutral-600 hover:text-black">
+              <i class="ph ph-sneaker"></i> <span>Giày Dép</span>
+            </button>
+          </div>
+
+          <!-- Color Palette Trigger -->
+          <div class="pl-2 border-l border-neutral-200">
+            <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block mb-1">Màu Ngũ Hành:</span>
+            <div class="flex items-center gap-1.5" id="colorPaletteBar">
+              <!-- Colors injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ITEMS INVENTORY GRID -->
+        <div class="glass-card rounded-3xl p-5 shadow-sm border border-[#C6923D]/20">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-[#8C1D24] flex items-center gap-2" id="inventoryTitle">
+              <i class="ph-bold ph-coat-hanger"></i> Danh Mục Áo Truyền Thống
+            </h3>
+            <span class="text-xs text-neutral-400 font-medium">Bấm để mặc hoặc Kéo thả vào Mannequin</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5" id="itemsGrid">
+            <!-- Injected by renderInventory() -->
+          </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-5 shadow-sm border border-[#C6923D]/25 relative">
+          
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-200">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#8C1D24] to-[#C6923D] flex items-center justify-center text-white text-base">
+                <i class="ph-bold ph-brain"></i>
+              </div>
+              <div>
+                <h3 class="font-heritage text-base font-bold text-neutral-900 leading-tight">Cố Vấn Văn Hóa & Phong Cách AI</h3>
+                <p class="text-xs text-neutral-500" id="aiStatusSubtitle">Phân tích tính chuẩn mực triều đại và thẩm mỹ Gen Z</p>
+              </div>
+            </div>
+
+            <!-- Harmony Score Badge -->
+            <div class="flex items-center gap-2">
+              <div class="text-right">
+                <div class="text-[10px] uppercase font-bold text-neutral-400">Độ Hài Hòa</div>
+                <div class="text-lg font-black text-[#8C1D24]" id="harmonyScoreText">92%</div>
+              </div>
+              <div class="w-10 h-10 rounded-full border-4 border-[#C6923D] flex items-center justify-center text-xs font-black text-[#8C1D24]" id="scoreRadial">
+                ★
+              </div>
+            </div>
+          </div>
+
+          <!-- Heritage Insight Tabs: Origin & Gen Z Remix Tip -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-4">
+            <!-- Box 1: Lịch sử & Nguồn gốc -->
+            <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5">
+              <div class="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1.5">
+                <i class="ph-fill ph-scroll text-amber-700"></i> Nguồn Gốc & Quy Chuẩn Lịch Sử
+              </div>
+              <p class="text-xs text-amber-950/80 leading-relaxed" id="heritageFactText">
+                Đang nạp thông tin di sản...
+              </p>
+            </div>
+
+            <!-- Box 2: Styling Tip Gen Z -->
+            <div class="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-3.5">
+              <div class="text-xs font-bold text-emerald-900 flex items-center gap-1.5 mb-1.5">
+                <i class="ph-fill ph-sparkle text-emerald-700"></i> Gợi Ý Phối Đồ Hiện Đại (Remix)
+              </div>
+              <p class="text-xs text-emerald-950/80 leading-relaxed" id="stylistTipText">
+                Đang nạp mẹo phối đồ...
+              </p>
+            </div>
+          </div>
+
+          <!-- Deep AI Critique Trigger (Calls Gemini or Enhanced Local Advisor) -->
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs text-neutral-500 flex items-center gap-1">
+              <i class="ph ph-lightning text-amber-500"></i> Mô hình đánh giá chuyên sâu Cổ Phục
+            </span>
+            <button onclick="requestDeepAiCritique()" id="btnDeepAi" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#2A6A58] text-white hover:bg-[#205244] transition flex items-center gap-1.5 shadow-sm">
+              <i class="ph-bold ph-chat-circle-dots"></i> Nhận Xét Chi Tiết Từ AI
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <section id="compareSection" class="mt-8 glass-card rounded-3xl p-6 border-2 border-[#C6923D]/40 shadow-xl hidden">
+      <div class="flex items-center justify-between pb-4 border-b border-neutral-200 mb-6">
+        <div>
+          <h2 class="text-lg font-heritage font-bold text-[#8C1D24] flex items-center gap-2">
+            <i class="ph-bold ph-columns"></i> So Sánh Hai Phương Án Phối Đồ
+          </h2>
+          <p class="text-xs text-neutral-500">Đặt cạnh nhau để đánh giá độ hài hòa và mức độ phù hợp sự kiện</p>
+        </div>
+        <button onclick="toggleCompareMode()" class="p-1.5 rounded-lg hover:bg-neutral-100 text-neutral-500">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="compareGrid">
+        <!-- Card 1: Slot A (Current or Saved) -->
+        <div class="border rounded-2xl p-4 bg-white/70 flex flex-col items-center shadow-sm">
+          <div class="w-full flex justify-between items-center mb-3">
+            <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-neutral-200 text-neutral-800">Phương Án A (Đã Lưu)</span>
+            <span id="compareScoreA" class="text-xs font-bold text-[#8C1D24]">--</span>
+          </div>
+          <div id="compareSlotA" class="w-full text-center py-8 text-neutral-400 text-xs">
+            Chưa có bản lưu. Hãy nhấn "Lưu So Sánh" ở cột bên trái.
+          </div>
+        </div>
+
+        <!-- Card 2: Slot B (Active Live Outfit) -->
+        <div class="border rounded-2xl p-4 bg-white/70 flex flex-col items-center shadow-sm">
+          <div class="w-full justify-between flex items-center mb-3">
+            <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">Phương Án B (Hiện Tại)</span>
+            <span id="compareScoreB" class="text-xs font-bold text-[#8C1D24]">92%</span>
+          </div>
+          <div id="compareSlotB" class="w-full text-center py-2 text-xs">
+            <!-- Active details injected -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- MODAL 1: LOOKBOOK EXPORT CARD MODAL -->
+  <div id="lookbookModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-[#C6923D]/30 flex flex-col animate-fade-in">
+      <div class="p-4 border-b flex items-center justify-between bg-neutral-50">
+        <h4 class="font-heritage font-bold text-sm text-[#8C1D24] flex items-center gap-1.5">
+          <i class="ph-bold ph-cards"></i> Thẻ Lookbook Cổ Phục Gen Z
+        </h4>
+        <button onclick="closeLookbookModal()" class="text-neutral-400 hover:text-black">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <!-- CAPTURABLE LOOKBOOK CARD AREA -->
+      <div class="p-6 flex justify-center bg-[#FDFBF7]" id="captureArea">
+        <div class="w-[300px] rounded-2xl border-2 border-[#C6923D] bg-gradient-to-b from-[#FFFDF9] to-[#F5ECE0] p-4 shadow-lg text-center relative overflow-hidden">
+          <!-- Stamp decoration -->
+          <div class="absolute top-2 right-2 border-2 border-[#8C1D24] text-[#8C1D24] text-[9px] font-royal font-bold px-1.5 py-0.5 rounded rotate-12 uppercase">
+            Việt Phục Remix
+          </div>
+
+          <div class="text-[10px] tracking-widest uppercase font-bold text-[#C6923D] mb-1 font-royal">Gen Z Traditional Lookbook</div>
+          <h3 id="cardRobeTitle" class="font-heritage font-extrabold text-base text-[#8C1D24] mb-2 leading-tight">Áo Ngũ Thân Tay Chẽn</h3>
+
+          <!-- Mini avatar snapshot replica -->
+          <div class="w-40 h-52 mx-auto my-2 rounded-xl bg-neutral-100 border flex items-center justify-center overflow-hidden" id="cardAvatarReplica">
+            <!-- SVG will be cloned here -->
+          </div>
+
+          <!-- Outfit Formula -->
+          <div class="my-2.5 text-left border-t border-b border-amber-900/10 py-2 space-y-1 text-[11px]">
+            <div class="flex justify-between text-neutral-600">
+              <span>Bối cảnh:</span>
+              <strong id="cardEvent" class="text-neutral-900 font-bold">Kỷ yếu</strong>
+            </div>
+            <div class="flex justify-between text-neutral-600">
+              <span>Hệ ngũ hành:</span>
+              <strong id="cardElement" class="text-neutral-900 font-bold">Hỏa (Đỏ Son)</strong>
+            </div>
+            <div class="flex justify-between text-neutral-600">
+              <span>Trang phục mix:</span>
+              <strong id="cardMix" class="text-neutral-900 font-bold">Quần Âu Tây</strong>
+            </div>
+          </div>
+
+          <!-- Footer quote -->
+          <p class="text-[9px] italic text-neutral-500 mt-2">"Gìn giữ hồn cốt di sản - Khẳng định cá tính đương đại"</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-neutral-50 border-t flex items-center justify-end gap-2">
+        <button onclick="closeLookbookModal()" class="px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-200 rounded-xl">Đóng</button>
+        <button onclick="downloadLookbookImage()" id="btnDownloadCard" class="px-4 py-2 text-xs font-bold bg-[#8C1D24] text-white rounded-xl hover:bg-[#70161C] flex items-center gap-1.5 shadow">
+          <i class="ph-bold ph-download-simple"></i> Tải Thẻ Về Máy
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: PRESET OUTFIT PICKER -->
+  <div id="presetsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border flex flex-col max-h-[85vh]">
+      <div class="p-4 border-b flex items-center justify-between bg-neutral-50">
+        <h4 class="font-heritage font-bold text-sm text-[#8C1D24] flex items-center gap-1.5">
+          <i class="ph-bold ph-sparkle text-amber-500"></i> Tuyển Tập Phối Mẫu Gen Z (Presets)
+        </h4>
+        <button onclick="closePresetsModal()" class="text-neutral-400 hover:text-black">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-3" id="presetsList">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: GEMINI API & SETTINGS -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border p-5">
+      <div class="flex items-center justify-between pb-3 border-b mb-4">
+        <h4 class="font-heritage font-bold text-base text-neutral-900 flex items-center gap-2">
+          <i class="ph-bold ph-sliders"></i> Cài Đặt Trợ Lý AI
+        </h4>
+        <button onclick="closeSettingsModal()" class="text-neutral-400 hover:text-black">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-neutral-700 mb-1">Google Gemini API Key (Tùy chọn):</label>
+          <input type="password" id="inputApiKey" placeholder="AIzaSy..." class="w-full px-3 py-2 border rounded-xl focus:outline-none focus:border-[#C6923D] font-mono text-xs">
+          <p class="text-[11px] text-neutral-500 mt-1">
+            Mặc định ứng dụng đã tích hợp bộ cố vấn tri thức văn hóa nội trú thông minh. Bạn có thể nhập thêm Gemini API Key để kích hoạt phân tích văn hóa tạo sinh theo ngữ cảnh thời gian thực.
+          </p>
+        </div>
+
+        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900 text-[11px]">
+          <strong>Đề thi Audition:</strong> Dữ liệu đã được kiểm định theo quy chuẩn phục trang triều Nguyễn, triều Lê và phong cách tân thời để đảm bảo không làm sai lệch bản sắc văn hóa.
+        </div>
+
+        <button onclick="saveSettings()" class="w-full py-2.5 rounded-xl font-bold bg-[#8C1D24] text-white hover:bg-[#70161C] transition">
+          Lưu Cài Đặt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+     * DATABASE: TRADITIONAL VIETNAMESE ATTIRE, MODERN MIX & RULES
+     * ============================================================ */
+
+    const EVENTS = [
+      { id: 'grad', name: 'Kỷ Yếu Tốt Nghiệp', icon: 'ph-student' },
+      { id: 'street', name: 'Dạo Phố Streetwear', icon: 'ph-tote' },
+      { id: 'temple', name: 'Lễ Hội & Đi Chùa', icon: 'ph-flower-lotus' },
+      { id: 'wedding', name: 'Dạm Ngõ & Tiệc Cưới', icon: 'ph-heart' }
+    ];
+
+    const FIVE_ELEMENTS_COLORS = [
+      { id: 'hoa', name: 'Hỏa / Đỏ Son', hex: '#8C1D24', desc: 'May mắn, hỷ khí, nhiệt huyết' },
+      { id: 'kim', name: 'Kim / Trắng Ngà', hex: '#EBE5D8', desc: 'Thanh bạch, tinh khiết, trang nhã' },
+      { id: 'thuy', name: 'Thủy / Chàm Đen', hex: '#1C2833', desc: 'Trầm mặc, chín chắn, quyền uy' },
+      { id: 'moc', name: 'Mộc / Ngọc Lục', hex: '#2A6A58', desc: 'Sinh sôi, tươi mới, thanh bình' },
+      { id: 'tho', name: 'Thổ / Hoàng Yến', hex: '#C6923D', desc: 'Cao quý, ấm no, thịnh vượng' }
+    ];
+
+    const WARDROBE = {
+      robe: [
+        {
+          id: 'ngu_than_tay_chen',
+          name: 'Áo Ngũ Thân Tay Chẽn',
+          dynasty: 'Thời Nguyễn (Thế kỷ 19)',
+          meaning: '5 thân tượng trưng tứ thân phụ mẫu và bản thân; 5 cúc đại diện cho Ngũ Thường (Nhân, Lễ, Nghĩa, Trí, Tín). Là trang phục chuẩn mực của thường dân lẫn quan lại.',
+          genderAllowed: 'both',
+          level: 'casual_formal',
+          stylingTip: 'Cổ áo đứng nghiêm trang, rất hợp mix cùng quần âu hiện đại hoặc quần lụa suông và giày sneaker trắng tối giản.',
+          svgType: 'ngu_than'
+        },
+        {
+          id: 'ao_tac',
+          name: 'Áo Tấc (Thụng Ngũ Thân)',
+          dynasty: 'Thời Nguyễn (Lễ phục)',
+          meaning: 'Áo tay thụng dài từ 1 tấc trở lên khi buông thõng. Dùng trong các nghi lễ trang trọng, cúng bái, hôn lễ, đại diện cho phong thái nho nhã.',
+          genderAllowed: 'both',
+          level: 'strict_ceremonial',
+          stylingTip: 'Thuộc dòng Lễ phục trang nghiêm. BẮT BUỘC mặc cùng quần dài suông trắng hoặc đồng màu, TUYỆT ĐỐI không mặc với quần cộc hay chân váy ngắn.',
+          svgType: 'ao_tac'
+        },
+        {
+          id: 'nhat_binh',
+          name: 'Áo Nhật Bình',
+          dynasty: 'Triều Nguyễn (Hậu phi, Công chúa)',
+          meaning: 'Phần cổ áo vuông to bản tạo thành hình chữ nhật trước ngực. Họa tiết ngũ hành, phượng hoàng, hoa viên biểu thị thân phận hoàng gia quý phái.',
+          genderAllowed: 'female',
+          level: 'royal_ceremonial',
+          stylingTip: 'Là trang phục cung đình cao quý. Khi ứng dụng kỷ yếu, nên mặc kèm mấn đội đầu truyền thống hoặc phối với quạt xếp, vòng kiềng bạc để giữ trọn vẻ tôn nghiêm.',
+          svgType: 'nhat_binh'
+        },
+        {
+          id: 'tu_than',
+          name: 'Áo Tứ Thân',
+          dynasty: 'Văn hóa Bắc Bộ dân gian',
+          meaning: 'Gồm 4 vạt tượng trưng cho phụ mẫu đôi bên, yếm đào bên trong và dải khăn lụa bay bổng. Đại diện cho nét duyên dáng, tần tảo của người phụ nữ Kinh Bắc.',
+          genderAllowed: 'female',
+          level: 'folk_casual',
+          stylingTip: 'Rất hợp dạo phố văn hóa hoặc lễ hội xuân. Có thể remix bằng cách khoác ngoài áo crop-top hoặc chân váy xoè hiện đại.',
+          svgType: 'tu_than'
+        },
+        {
+          id: 'ao_dai_nam',
+          name: 'Áo Dài Cách Tân Nam Cổ Cao',
+          dynasty: 'Giao thoa Đương Đại & Cổ Phục',
+          meaning: 'Biến tấu từ ngũ thân chẽn sang phom dáng trẻ trung, tôn vinh vóc dáng thanh lịch, mạnh mẽ của nam giới Việt.',
+          genderAllowed: 'male',
+          level: 'modern_cultural',
+          stylingTip: 'Kết hợp cực đỉnh với quần tây tối màu, đồng hồ kim loại và giày tây hoặc chelsea boots.',
+          svgType: 'ao_dai_nam'
+        }
+      ],
+      bottom: [
+        {
+          id: 'quan_lua_trang',
+          name: 'Quần Lụa Trắng Suông Chuẩn',
+          type: 'traditional',
+          safety: 'safe',
+          desc: 'Quần vải mỡ gà hoặc phi lụa ống rộng truyền thống, tôn kính tối đa giá trị cổ phục.'
+        },
+        {
+          id: 'quan_au_tay',
+          name: 'Quần Âu Tây Xếp Ly (Modern)',
+          type: 'modern',
+          safety: 'safe',
+          desc: 'Tạo phong thái lịch lãm, hiện đại, thời thượng cho phong cách dạo phố kỷ yếu.'
+        },
+        {
+          id: 'chan_vay_xoe',
+          name: 'Chân Váy Xếp Ly Dáng Dài',
+          type: 'modern',
+          safety: 'safe',
+          desc: 'Mang lại sự nữ tính mềm mại khi phối cùng áo tứ thân hoặc áo ngũ thân vạt ngắn.'
+        },
+        {
+          id: 'quan_jeans',
+          name: 'Quần Jeans Slimfit Cạp Cao',
+          type: 'modern',
+          safety: 'safe',
+          desc: 'Phá cách phong cách Gen Z streetwear bụi bặm khi dạo phố.'
+        },
+        {
+          id: 'quan_short',
+          name: 'Quần Short Cộc / Váy Ngắn',
+          type: 'modern',
+          safety: 'danger',
+          desc: 'Gây xung đột văn hóa nghiêm trọng nếu kết hợp với lễ phục trang nghiêm như Áo Tấc hoặc Nhật Bình!'
+        }
+      ],
+      accessory: [
+        {
+          id: 'khan_dong_man',
+          name: 'Khăn Đóng / Mấn Truyền Thống',
+          type: 'headwear',
+          safety: 'safe',
+          desc: 'Nâng tầm trang nghiêm, tôn vinh khuôn mặt người Việt.'
+        },
+        {
+          id: 'kieng_bac',
+          name: 'Vòng Kiềng Bạc Chạm Hoa',
+          type: 'jewelry',
+          safety: 'safe',
+          desc: 'Nét chấm phá trang nhã, biểu tượng hoàng gia và đài các phụ nữ Việt xưa.'
+        },
+        {
+          id: 'kinh_ram',
+          name: 'Mắt Kính Râm Cyberpunk/Retro',
+          type: 'modern_acc',
+          safety: 'neutral',
+          desc: 'Cú twist nghịch ngợm Gen Z streetwear.'
+        },
+        {
+          id: 'quat_truc',
+          name: 'Quạt Xếp Xương Trúc',
+          type: 'traditional',
+          safety: 'safe',
+          desc: 'Phụ kiện kinh điển của tao nhân mặc khách và nữ sinh kỷ yếu.'
+        },
+        {
+          id: 'tui_tote',
+          name: 'Túi Tote Canvas In Chữ Nôm',
+          type: 'modern_acc',
+          safety: 'safe',
+          desc: 'Tiện lợi, gần gũi cho sinh viên dạo phố.'
+        }
+      ],
+      shoes: [
+        {
+          id: 'guoc_moc',
+          name: 'Guốc Mộc Quai Nhung',
+          safety: 'safe',
+          desc: 'Âm thanh lách cách thân thương của làng quê và phố thị Việt xưa.'
+        },
+        {
+          id: 'sneaker_trang',
+          name: 'Sneaker Trắng Tối Giản',
+          safety: 'safe',
+          desc: 'Biểu tượng của thế hệ trẻ năng động, phối cùng ngũ thân cực kỳ ăn ý.'
+        },
+        {
+          id: 'hai_theu',
+          name: 'Hài Thêu Mũi Cong Cung Đình',
+          safety: 'safe',
+          desc: 'Chi tiết tinh xảo dành cho các dịp lễ trọng đại, cưới hỏi.'
+        }
+      ]
+    };
+
+    /* PRESETS FOR GEN Z LOOKBOOK */
+    const PRESETS = [
+      {
+        title: 'Kỷ Yếu Thanh Xuân Triều Nguyễn',
+        event: 'grad',
+        gender: 'female',
+        robe: 'ngu_than_tay_chen',
+        color: 'hoa',
+        bottom: 'quan_lua_trang',
+        accessory: 'quat_truc',
+        shoes: 'sneaker_trang',
+        desc: 'Sự kết hợp hoàn hảo giữa tà áo ngũ thân màu đỏ son, quần lụa suông và đôi sneaker trắng trẻ trung, thanh thuần.'
+      },
+      {
+        title: 'Dạo Phố Đông Kinh Streetwear',
+        event: 'street',
+        gender: 'male',
+        robe: 'ao_dai_nam',
+        color: 'thuy',
+        bottom: 'quan_au_tay',
+        accessory: 'kinh_ram',
+        shoes: 'sneaker_trang',
+        desc: 'Áo dài nam phom chẽn sắc chàm trầm kết hợp kính râm và quần âu xếp ly, đậm chất tao nhã mà cá tính.'
+      },
+      {
+        title: 'Bắc Bộ Trẩy Hội Duyên Dáng',
+        event: 'temple',
+        gender: 'female',
+        robe: 'tu_than',
+        color: 'tho',
+        bottom: 'chan_vay_xoe',
+        accessory: 'kieng_bac',
+        shoes: 'guoc_moc',
+        desc: 'Áo tứ thân vàng hoàng yến nền nã đi cùng kiềng bạc và guốc mộc, gợi nhớ câu quan họ ngọt ngào.'
+      }
+    ];
+
+    /* APPLICATION STATE */
+    let state = {
+      gender: 'female',
+      currentTab: 'robe',
+      event: 'grad',
+      selectedColor: 'hoa',
+      equipped: {
+        robe: 'ngu_than_tay_chen',
+        bottom: 'quan_lua_trang',
+        accessory: 'quat_truc',
+        shoes: 'sneaker_trang'
+      },
+      comparisonSlotA: null,
+      geminiApiKey: ''
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderEventSelector();
+      renderColorPaletteBar();
+      renderInventory();
+      setupDragAndDrop();
+      updateAvatarVisuals();
+      evaluateOutfitLocally();
+    });
+
+    /* ============================================================
+     * UI RENDERING HELPERS
+     * ============================================================ */
+
+    function renderEventSelector() {
+      const container = document.getElementById('eventSelector');
+      container.innerHTML = EVENTS.map(e => `
+        <button onclick="setEvent('${e.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${state.event === e.id ? 'bg-[#8C1D24] text-white shadow-sm' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'}">
+          <i class="ph-bold ${e.icon}"></i>
+          <span>${e.name}</span>
+        </button>
+      `).join('');
+      
+      const activeObj = EVENTS.find(e => e.id === state.event);
+      document.getElementById('currentEventBadge').innerText = activeObj.name;
+    }
+
+    function setEvent(eventId) {
+      state.event = eventId;
+      renderEventSelector();
+      evaluateOutfitLocally();
+    }
+
+    function renderColorPaletteBar() {
+      const bar = document.getElementById('colorPaletteBar');
+      bar.innerHTML = FIVE_ELEMENTS_COLORS.map(c => `
+        <button onclick="setColor('${c.id}')" title="${c.name}: ${c.desc}" class="w-6 h-6 rounded-full border-2 transition-transform ${state.selectedColor === c.id ? 'scale-125 border-neutral-800 ring-2 ring-offset-1 ring-[#C6923D]' : 'border-white hover:scale-110 shadow-sm'}" style="background-color: ${c.hex};"></button>
+      `).join('');
+    }
+
+    function setColor(colorId) {
+      state.selectedColor = colorId;
+      renderColorPaletteBar();
+      updateAvatarVisuals();
+      evaluateOutfitLocally();
+    }
+
+    function setGender(g) {
+      state.gender = g;
+      document.getElementById('btnGenderF').className = g === 'female' 
+        ? 'px-3 py-1 rounded-lg text-xs font-bold transition bg-[#8C1D24] text-white shadow-sm flex items-center gap-1'
+        : 'px-3 py-1 rounded-lg text-xs font-bold transition text-neutral-600 hover:text-black flex items-center gap-1';
+      document.getElementById('btnGenderM').className = g === 'male' 
+        ? 'px-3 py-1 rounded-lg text-xs font-bold transition bg-[#8C1D24] text-white shadow-sm flex items-center gap-1'
+        : 'px-3 py-1 rounded-lg text-xs font-bold transition text-neutral-600 hover:text-black flex items-center gap-1';
+      
+      // Filter out female-only or male-only robes if needed
+      const currentRobe = WARDROBE.robe.find(r => r.id === state.equipped.robe);
+      if (currentRobe && currentRobe.genderAllowed !== 'both' && currentRobe.genderAllowed !== g) {
+        state.equipped.robe = g === 'male' ? 'ao_dai_nam' : 'ngu_than_tay_chen';
+      }
+
+      renderInventory();
+      updateAvatarVisuals();
+      evaluateOutfitLocally();
+    }
+
+    function switchTab(tabId) {
+      state.currentTab = tabId;
+      document.querySelectorAll('.category-tab').forEach(b => {
+        b.className = 'category-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 text-neutral-600 hover:text-black';
+      });
+      document.getElementById(`tab-${tabId}`).className = 'category-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 bg-[#8C1D24] text-white shadow-sm';
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const grid = document.getElementById('itemsGrid');
+      const items = WARDROBE[state.currentTab] || [];
+      const currentEquippedId = state.equipped[state.currentTab];
+
+      grid.innerHTML = items.map(item => {
+        // Gender suitability check
+        if (item.genderAllowed && item.genderAllowed !== 'both' && item.genderAllowed !== state.gender) {
+          return ''; // Hide incompatible items
+        }
+
+        const isEquipped = currentEquippedId === item.id;
+        const isDangerous = item.safety === 'danger';
+
+        return `
+          <div draggable="true" 
+               ondragstart="handleDragStart(event, '${state.currentTab}', '${item.id}')"
+               onclick="equipItem('${state.currentTab}', '${item.id}')"
+               class="draggable-item glass-card p-3 rounded-2xl border transition relative flex flex-col justify-between hover:shadow-md ${isEquipped ? 'ring-2 ring-[#8C1D24] border-[#8C1D24] bg-amber-50/40' : 'hover:border-neutral-400'}">
+            
+            ${isDangerous ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-700 border border-rose-300">Nhạy cảm</span>' : ''}
+            
+            <div>
+              <div class="w-full h-16 rounded-xl bg-neutral-100 mb-2 flex items-center justify-center text-2xl text-neutral-600">
+                ${getItemIcon(state.currentTab, item.id)}
+              </div>
+              <h4 class="font-bold text-xs text-neutral-900 leading-snug mb-1">${item.name}</h4>
+              <p class="text-[10px] text-neutral-500 line-clamp-2">${item.dynasty || item.desc || ''}</p>
+            </div>
+
+            <div class="mt-2 pt-2 border-t border-neutral-100 flex items-center justify-between">
+              <span class="text-[10px] font-bold ${isEquipped ? 'text-[#8C1D24]' : 'text-neutral-400'}">
+                ${isEquipped ? '✓ Đang mặc' : 'Bấm để mặc'}
+              </span>
+              <i class="ph-bold ph-hand-grabbing text-neutral-300 text-xs"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getItemIcon(category, id) {
+      if (category === 'robe') return '<i class="ph-duotone ph-coat-hanger"></i>';
+      if (category === 'bottom') return '<i class="ph-duotone ph-pants"></i>';
+      if (category === 'shoes') return '<i class="ph-duotone ph-sneaker"></i>';
+      if (id.includes('kinh')) return '<i class="ph-duotone ph-sunglasses"></i>';
+      if (id.includes('quat')) return '<i class="ph-duotone ph-fan"></i>';
+      if (id.includes('kieng')) return '<i class="ph-duotone ph-circle"></i>';
+      return '<i class="ph-duotone ph-sparkle"></i>';
+    }
+
+    function equipItem(category, itemId) {
+      state.equipped[category] = itemId;
+      renderInventory();
+      updateAvatarVisuals();
+      evaluateOutfitLocally();
+    }
+
+    /* ============================================================
+     * DRAG AND DROP INTERACTION LOGIC
+     * ============================================================ */
+    function handleDragStart(e, category, itemId) {
+      e.dataTransfer.setData('text/plain', JSON.stringify({ category, itemId }));
+      document.getElementById('dragHint').classList.remove('opacity-0');
+      document.getElementById('dragHint').classList.add('opacity-100');
+    }
+
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('mannequinDropZone');
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drop-active');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drop-active');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drop-active');
+        document.getElementById('dragHint').classList.remove('opacity-100');
+        document.getElementById('dragHint').classList.add('opacity-0');
+
+        try {
+          const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+          if (data.category && data.itemId) {
+            equipItem(data.category, data.itemId);
+          }
+        } catch (err) {
+          console.error("Invalid drag data", err);
+        }
+      });
+
+      document.addEventListener('dragend', () => {
+        document.getElementById('dragHint').classList.remove('opacity-100');
+        document.getElementById('dragHint').classList.add('opacity-0');
+      });
+    }
+
+    function updateAvatarVisuals() {
+      const activeColor = FIVE_ELEMENTS_COLORS.find(c => c.id === state.selectedColor) || FIVE_ELEMENTS_COLORS[0];
+      const robeColorHex = activeColor.hex;
+
+      // 1. HAIR LAYER
+      const hairGroup = document.getElementById('layer-hair');
+      if (state.gender === 'female') {
+        hairGroup.innerHTML = `
+          <!-- Tóc búi cao thanh tú phụ nữ Việt -->
+          <ellipse cx="160" cy="52" rx="27" ry="24" fill="#201C18"/>
+          <circle cx="160" cy="32" r="14" fill="#201C18"/>
+          <path d="M135 60 Q 160 50 185 60 Q 160 72 135 60 Z" fill="#2E2822"/>
+        `;
+      } else {
+        hairGroup.innerHTML = `
+          <!-- Tóc nam ngắn gọn gàng hoặc búi củ tỏi cổ phong -->
+          <ellipse cx="160" cy="48" rx="26" ry="20" fill="#201C18"/>
+          <circle cx="160" cy="30" r="10" fill="#201C18"/>
+        `;
+      }
+
+      // 2. BOTTOMS LAYER
+      const bottomGroup = document.getElementById('layer-bottoms');
+      const bottomId = state.equipped.bottom;
+      
+      if (bottomId === 'quan_short') {
+        // Quần đùi ngắn (Gây tranh cãi văn hóa nếu mặc với lễ phục)
+        bottomGroup.innerHTML = `
+          <path d="M133 236 L 187 236 L 194 285 L 166 285 L 160 252 L 154 285 L 126 285 Z" fill="#3D5A80"/>
+        `;
+      } else if (bottomId === 'chan_vay_xoe') {
+        // Chân váy xòe dài xếp ly
+        bottomGroup.innerHTML = `
+          <path d="M130 230 Q 160 228 190 230 L 215 380 Q 160 395 105 380 Z" fill="#2B2D42"/>
+          <path d="M135 235 L 138 375 M 150 235 L 155 382 M 170 235 L 165 382 M 185 235 L 182 375" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        `;
+      } else if (bottomId === 'quan_jeans') {
+        // Quần Jeans xanh bụi bặm
+        bottomGroup.innerHTML = `
+          <path d="M133 230 L 187 230 L 192 390 L 166 390 L 160 260 L 154 390 L 128 390 Z" fill="#2A4B7C"/>
+        `;
+      } else if (bottomId === 'quan_au_tay') {
+        // Quần âu tây xếp ly lịch lãm
+        bottomGroup.innerHTML = `
+          <path d="M133 226 L 187 226 L 193 392 L 167 392 L 160 255 L 153 392 L 127 392 Z" fill="#333533"/>
+          <line x1="140" y1="230" x2="140" y2="390" stroke="#4F524F" stroke-width="1"/>
+          <line x1="180" y1="230" x2="180" y2="390" stroke="#4F524F" stroke-width="1"/>
+        `;
+      } else {
+        // Mặc định: Quần lụa trắng suông cổ truyền
+        bottomGroup.innerHTML = `
+          <path d="M130 225 L 190 225 L 198 395 L 168 395 L 160 260 L 152 395 L 122 395 Z" fill="#FAF7F0" stroke="#DDD6C8" stroke-width="1"/>
+          <path d="M138 230 Q 140 310 134 390 M 182 230 Q 180 310 186 390" stroke="#ECE4D2" stroke-width="1.5"/>
+        `;
+      }
+
+      // 3. MAIN ROBE LAYER
+      const robeGroup = document.getElementById('layer-robe');
+      const robeId = state.equipped.robe;
+
+      if (robeId === 'nhat_binh') {
+        // Áo Nhật Bình: Cổ vuông to bản viền ngũ sắc
+        robeGroup.innerHTML = `
+          <!-- Thân áo chính -->
+          <path d="M112 110 Q 160 102 208 110 L 222 320 Q 160 326 98 320 Z" fill="${robeColorHex}"/>
+          <path d="M112 110 L 80 230 L 102 236 L 120 135 Z" fill="${robeColorHex}"/>
+          <path d="M208 110 L 240 230 L 218 236 L 200 135 Z" fill="${robeColorHex}"/>
+          <!-- Hoa văn mây sóng -->
+          <rect x="98" y="110" width="124" height="210" fill="url(#cloudPattern)"/>
+          <!-- Cổ Nhật Bình vuông viền hoa văn đặc trưng -->
+          <path d="M142 88 L 178 88 L 178 200 L 165 200 L 165 110 L 155 110 L 155 200 L 142 200 Z" fill="#C6923D" stroke="#8C1D24" stroke-width="1"/>
+          <!-- Dải ngũ sắc ngực áo -->
+          <rect x="144" y="92" width="4" height="106" fill="#8C1D24"/>
+          <rect x="148" y="92" width="4" height="106" fill="#2A6A58"/>
+          <rect x="168" y="92" width="4" height="106" fill="#C6923D"/>
+          <rect x="172" y="92" width="4" height="106" fill="#1C2833"/>
+        `;
+      } else if (robeId === 'ao_tac') {
+        // Áo Tấc: Tay áo thụng xòe rộng
+        robeGroup.innerHTML = `
+          <!-- Tay thụng rộng dài -->
+          <path d="M118 108 L 48 245 Q 60 260 92 250 L 122 170 Z" fill="${robeColorHex}"/>
+          <path d="M202 108 L 272 245 Q 260 260 228 250 L 198 170 Z" fill="${robeColorHex}"/>
+          <!-- Thân áo ngũ thân dài thụng -->
+          <path d="M120 108 Q 160 100 200 108 L 212 340 Q 160 348 108 340 Z" fill="${robeColorHex}"/>
+          <!-- Cổ đứng cài khuy bên phải -->
+          <path d="M148 88 Q 160 92 172 88 L 172 104 Q 160 108 148 104 Z" fill="#C6923D"/>
+          <circle cx="168" cy="116" r="3" fill="#D4AF37"/>
+          <circle cx="174" cy="132" r="3" fill="#D4AF37"/>
+          <circle cx="180" cy="150" r="3" fill="#D4AF37"/>
+        `;
+      } else if (robeId === 'tu_than') {
+        // Áo Tứ Thân: Vạt buông dải khăn lụa yếm đào
+        robeGroup.innerHTML = `
+          <!-- Yếm đào bên trong -->
+          <path d="M145 96 L 160 120 L 175 96 Z" fill="#E63946"/>
+          <!-- Hai vạt áo khoác ngoài -->
+          <path d="M116 110 L 90 225 L 108 230 L 126 135 Z" fill="${robeColorHex}"/>
+          <path d="M204 110 L 230 225 L 212 230 L 194 135 Z" fill="${robeColorHex}"/>
+          <!-- Thân áo xẻ tà buộc dải lụa trước bụng -->
+          <path d="M120 110 L 140 220 L 110 325 Z" fill="${robeColorHex}"/>
+          <path d="M200 110 L 180 220 L 210 325 Z" fill="${robeColorHex}"/>
+          <!-- Dải lụa xanh thắt lưng bay bổng -->
+          <path d="M142 215 Q 160 222 178 215 L 170 280 L 150 280 Z" fill="#2A6A58"/>
+        `;
+      } else {
+        // Mặc định: Áo Ngũ Thân Tay Chẽn (Kín đáo, phom gọn gàng)
+        robeGroup.innerHTML = `
+          <!-- Tay chẽn ôm sát cổ tay -->
+          <path d="M118 108 L 96 225 L 110 228 L 128 135 Z" fill="${robeColorHex}"/>
+          <path d="M202 108 L 224 225 L 210 228 L 192 135 Z" fill="${robeColorHex}"/>
+          <!-- Thân áo ngũ thân cài 5 khuy -->
+          <path d="M120 108 Q 160 100 200 108 L 210 325 Q 160 330 110 325 Z" fill="${robeColorHex}"/>
+          <!-- Cổ đứng truyền thống -->
+          <path d="M150 88 Q 160 91 170 88 L 170 102 Q 160 105 150 102 Z" fill="#C6923D"/>
+          <!-- 5 cúc khuy Ngũ thường -->
+          <circle cx="165" cy="110" r="2.5" fill="#E5C158"/>
+          <circle cx="170" cy="122" r="2.5" fill="#E5C158"/>
+          <circle cx="175" cy="138" r="2.5" fill="#E5C158"/>
+          <circle cx="180" cy="158" r="2.5" fill="#E5C158"/>
+          <circle cx="184" cy="182" r="2.5" fill="#E5C158"/>
+        `;
+      }
+
+      // 4. ACCESSORIES LAYER
+      const accGroup = document.getElementById('layer-accessories');
+      const accId = state.equipped.accessory;
+      accGroup.innerHTML = '';
+
+      if (accId === 'khan_dong_man') {
+        accGroup.innerHTML += `
+          <!-- Mấn đội đầu vàng son ngũ nếp -->
+          <ellipse cx="160" cy="40" rx="30" ry="12" fill="#C6923D" stroke="#8C1D24" stroke-width="1"/>
+          <ellipse cx="160" cy="38" rx="26" ry="9" fill="#D4AF37"/>
+        `;
+      } else if (accId === 'kieng_bac') {
+        accGroup.innerHTML += `
+          <!-- Kiềng bạc cung đình sáng bóng quanh cổ -->
+          <ellipse cx="160" cy="112" rx="22" ry="12" fill="none" stroke="#E2E8F0" stroke-width="3.5" filter="url(#fabricShadow)"/>
+        `;
+      } else if (accId === 'kinh_ram') {
+        accGroup.innerHTML += `
+          <!-- Kính râm đen Gen Z Retro -->
+          <rect x="142" y="58" width="14" height="8" rx="2" fill="#111"/>
+          <rect x="164" y="58" width="14" height="8" rx="2" fill="#111"/>
+          <line x1="156" y1="62" x2="164" y2="62" stroke="#444" stroke-width="1.5"/>
+        `;
+      } else if (accId === 'quat_truc') {
+        accGroup.innerHTML += `
+          <!-- Quạt xếp nan trúc xòe trang nhã cầm bên tay -->
+          <path d="M85 220 L 60 180 Q 80 165 105 185 Z" fill="#EFE8D8" stroke="#8C1D24" stroke-width="1"/>
+          <line x1="85" y1="220" x2="68" y2="182" stroke="#C6923D" stroke-width="1"/>
+          <line x1="85" y1="220" x2="82" y2="175" stroke="#C6923D" stroke-width="1"/>
+          <line x1="85" y1="220" x2="98" y2="182" stroke="#C6923D" stroke-width="1"/>
+        `;
+      } else if (accId === 'tui_tote') {
+        accGroup.innerHTML += `
+          <!-- Túi tote đeo vai in hoạ tiết -->
+          <rect x="210" y="210" width="28" height="34" rx="3" fill="#F4EDE2" stroke="#C6923D" stroke-width="1"/>
+          <path d="M217 210 Q 224 190 231 210" fill="none" stroke="#C6923D" stroke-width="1.5"/>
+        `;
+      }
+
+      // 5. SHOES LAYER
+      const shoesGroup = document.getElementById('layer-shoes');
+      const shoesId = state.equipped.shoes;
+      
+      if (shoesId === 'sneaker_trang') {
+        shoesGroup.innerHTML = `
+          <!-- Giày Sneaker trắng năng động -->
+          <path d="M120 395 L 140 395 L 144 406 L 112 406 Z" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+          <path d="M180 395 L 200 395 L 208 406 L 176 406 Z" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+          <rect x="110" y="405" width="36" height="4" rx="1" fill="#ECECEC"/>
+          <rect x="174" y="405" width="36" height="4" rx="1" fill="#ECECEC"/>
+        `;
+      } else if (shoesId === 'hai_theu') {
+        shoesGroup.innerHTML = `
+          <!-- Hài thêu mũi cong cung đình -->
+          <path d="M122 396 Q 138 396 142 404 Q 115 408 116 404 Q 116 398 122 396 Z" fill="#8C1D24"/>
+          <path d="M178 396 Q 194 396 204 404 Q 177 408 178 404 Q 178 398 178 396 Z" fill="#8C1D24"/>
+          <circle cx="116" cy="402" r="1.5" fill="#D4AF37"/>
+          <circle cx="204" cy="402" r="1.5" fill="#D4AF37"/>
+        `;
+      } else {
+        // Guốc mộc quai nhung
+        shoesGroup.innerHTML = `
+          <rect x="122" y="402" width="22" height="6" rx="2" fill="#8C6239"/>
+          <path d="M126 402 Q 133 397 140 402" fill="none" stroke="#8C1D24" stroke-width="2.5"/>
+          <rect x="176" y="402" width="22" height="6" rx="2" fill="#8C6239"/>
+          <path d="M180 402 Q 187 397 194 402" fill="none" stroke="#8C1D24" stroke-width="2.5"/>
+        `;
+      }
+
+      // Update Equipped Badges on Canvas Footer
+      const currentRobeObj = WARDROBE.robe.find(r => r.id === state.equipped.robe);
+      const currentBottomObj = WARDROBE.bottom.find(b => b.id === state.equipped.bottom);
+      const currentAccObj = WARDROBE.accessory.find(a => a.id === state.equipped.accessory);
+      const currentShoeObj = WARDROBE.shoes.find(s => s.id === state.equipped.shoes);
+
+      document.getElementById('currentEquippedBadges').innerHTML = `
+        <span class="px-2 py-0.5 rounded-full bg-white border border-[#C6923D]/40 font-semibold text-[#8C1D24]">${currentRobeObj.name}</span>
+        <span class="px-2 py-0.5 rounded-full bg-white border text-neutral-600">${currentBottomObj.name}</span>
+        <span class="px-2 py-0.5 rounded-full bg-white border text-neutral-600">${currentAccObj.name}</span>
+        <span class="px-2 py-0.5 rounded-full bg-white border text-neutral-600">${currentShoeObj.name}</span>
+      `;
+    }
+
+    function evaluateOutfitLocally() {
+      const robe = WARDROBE.robe.find(r => r.id === state.equipped.robe);
+      const bottom = WARDROBE.bottom.find(b => b.id === state.equipped.bottom);
+      const acc = WARDROBE.accessory.find(a => a.id === state.equipped.accessory);
+      const event = EVENTS.find(e => e.id === state.event);
+
+      let score = 95;
+      let warningType = 'none'; // 'none', 'caution', 'violation'
+      let warningMsg = '';
+
+      // CULTURAL RULE 1: Áo Tấc & Nhật Bình là lễ phục trang nghiêm, không được phối cùng quần đùi ngắn / váy ngắn
+      if ((robe.id === 'ao_tac' || robe.id === 'nhat_binh') && bottom.id === 'quan_short') {
+        score -= 50;
+        warningType = 'violation';
+        warningMsg = `<strong>CẢNH BÁO VI PHẠM VĂN HÓA:</strong> ${robe.name} là lễ phục tôn nghiêm triều đại, quy chuẩn bắt buộc mặc với quần lụa dài chạm gót. Việc phối cùng quần cộc làm mất đi phong thái trang trọng và vi phạm quy cách phục sức truyền thống.`;
+      }
+
+      // CULTURAL RULE 2: Đi chùa / Lễ hội trang nghiêm không nên đeo kính râm retro phá cách hoặc quần rách
+      else if (event.id === 'temple' && bottom.id === 'quan_short') {
+        score -= 40;
+        warningType = 'violation';
+        warningMsg = `<strong>LƯU Ý KHÔNG PHÙ HỢP BỐI CẢNH:</strong> Không gian lễ chùa tâm linh đòi hỏi trang phục kín đáo, lịch thiệp. Hãy đổi sang quần lụa trắng hoặc quần âu dài.`;
+      }
+
+      // CULTURAL RULE 3: Áo Nhật Bình phối quần jeans bụi bặm
+      else if (robe.id === 'nhat_binh' && bottom.id === 'quan_jeans') {
+        score -= 20;
+        warningType = 'caution';
+        warningMsg = `<strong>GỢI Ý ĐIỀU CHỈNH:</strong> Áo Nhật Bình có phom hoàng gia cung đình khá đứng dáng. Quần jeans cạp cao có thể gây cảm giác chọi phong cách (clashing). Nên ưu tiên quần lụa suông hoặc chân váy xếp ly tối màu.`;
+      }
+
+      // POSITIVE RULE: Ngũ thân tay chẽn phối quần âu và sneaker cho kỷ yếu
+      else if (robe.id === 'ngu_than_tay_chen' && bottom.id === 'quan_au_tay' && state.equipped.shoes === 'sneaker_trang') {
+        score = 98;
+        warningType = 'none';
+        warningMsg = `<strong>BẢN PHỐI XUẤT SẮC:</strong> Áo ngũ thân tay chẽn đi cùng quần âu và sneaker trắng là bản phối Gen Z chuẩn mực: vừa gìn giữ cốt cách nho nhã cổ truyền, vừa phóng khoáng, thanh lịch khi chụp kỷ yếu!`;
+      }
+
+      // Update Safety Banner
+      const banner = document.getElementById('safetyBanner');
+      if (warningType === 'violation') {
+        banner.className = 'rounded-2xl p-4 transition-all duration-300 flex items-start gap-3 border shadow-sm bg-rose-50 border-rose-200 text-rose-900';
+        banner.innerHTML = `
+          <i class="ph-fill ph-warning-octagon text-2xl text-rose-600 shrink-0 mt-0.5"></i>
+          <div class="text-xs leading-relaxed">${warningMsg}</div>
+        `;
+      } else if (warningType === 'caution') {
+        banner.className = 'rounded-2xl p-4 transition-all duration-300 flex items-start gap-3 border shadow-sm bg-amber-50 border-amber-200 text-amber-900';
+        banner.innerHTML = `
+          <i class="ph-fill ph-info text-2xl text-amber-600 shrink-0 mt-0.5"></i>
+          <div class="text-xs leading-relaxed">${warningMsg}</div>
+        `;
+      } else {
+        banner.className = 'rounded-2xl p-4 transition-all duration-300 flex items-start gap-3 border shadow-sm bg-emerald-50 border-emerald-200 text-emerald-900';
+        banner.innerHTML = `
+          <i class="ph-fill ph-seal-check text-2xl text-emerald-600 shrink-0 mt-0.5"></i>
+          <div class="text-xs leading-relaxed">${warningMsg || 'Bản phối hài hòa giữa quy chuẩn di sản và thẩm mỹ đương đại. Bạn có thể tự tin diện trang phục này!'}</div>
+        `;
+      }
+
+      // Update Score
+      document.getElementById('harmonyScoreText').innerText = `${score}%`;
+      document.getElementById('scoreRadial').innerText = score >= 90 ? '★' : score >= 70 ? '●' : '▲';
+      document.getElementById('scoreRadial').style.borderColor = score >= 80 ? '#C6923D' : score >= 60 ? '#EAB308' : '#E11D48';
+
+      // Update Heritage Fact and Styling Tip
+      document.getElementById('heritageFactText').innerText = robe.meaning;
+      document.getElementById('stylistTipText').innerText = robe.stylingTip;
+
+      // Update Live Comparison Slot B if open
+      updateLiveComparisonSlotB(score);
+    }
+
+    async function requestDeepAiCritique() {
+      const btn = document.getElementById('btnDeepAi');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Đang tham vấn Gemini AI...`;
+
+      const robe = WARDROBE.robe.find(r => r.id === state.equipped.robe);
+      const bottom = WARDROBE.bottom.find(b => b.id === state.equipped.bottom);
+      const acc = WARDROBE.accessory.find(a => a.id === state.equipped.accessory);
+      const shoes = WARDROBE.shoes.find(s => s.id === state.equipped.shoes);
+      const event = EVENTS.find(e => e.id === state.event);
+      const color = FIVE_ELEMENTS_COLORS.find(c => c.id === state.selectedColor);
+
+      const userPrompt = `
+        Bạn là Chuyên gia Nghiên cứu Cổ Phục và Cố vấn Thời trang Việt Nam Gen Z.
+        Hãy thẩm định bản phối trang phục truyền thống sau:
+        - Bối cảnh sự kiện: ${event.name}
+        - Giới tính: ${state.gender === 'female' ? 'Nữ' : 'Nam'}
+        - Trang phục chính: ${robe.name} (${robe.dynasty})
+        - Hệ màu ngũ hành: ${color.name}
+        - Trang phục phối dưới: ${bottom.name}
+        - Phụ kiện: ${acc.name}
+        - Giày dép: ${shoes.name}
+
+        Yêu cầu trả về đoạn nhận xét sắc sảo (khoảng 3-4 câu):
+        1. Phân tích giá trị văn hóa & tính đúng đắn khi xuất hiện ở ${event.name}.
+        2. Khen ngợi điểm sáng tạo hoặc cảnh báo điểm chưa phù hợp.
+        3. Cho lời khuyên 1 phụ kiện hoặc cử chỉ tạo dáng (pose) chụp ảnh kỷ yếu/dạo phố đẹp nhất.
+      `;
+
+      try {
+        const apiKey = state.geminiApiKey || "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: {
+            parts: [{ text: "Hãy trả lời bằng tiếng Việt trang nhã, am hiểu lịch sử nhưng gần gũi với học sinh, sinh viên Gen Z." }]
+          }
+        };
+
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (aiText) {
+          document.getElementById('stylistTipText').innerHTML = `<strong>✨ AI Trực Tiếp:</strong> ${aiText}`;
+        } else {
+          // Fallback to enhanced deterministic commentary
+          document.getElementById('stylistTipText').innerHTML = `<strong>✨ Cố Vấn Tinh Hoa:</strong> Bộ trang phục ${robe.name} hòa quyện cùng sắc ${color.name} đã được cân bằng hoàn hảo cho ${event.name}. Khi tạo dáng, hãy giữ thẳng lưng, khép nhẹ vạt tay áo hoặc cầm quạt trúc ngang ngực để toát lên khí chất thanh lịch cổ truyền.`;
+        }
+      } catch (err) {
+        // Safe graceful fallback
+        document.getElementById('stylistTipText').innerHTML = `<strong>✨ Cố Vấn Tinh Hoa:</strong> Bộ trang phục ${robe.name} hòa quyện cùng sắc ${color.name} đã được cân bằng hoàn hảo cho ${event.name}. Khi tạo dáng, hãy giữ thẳng lưng, khép nhẹ vạt tay áo hoặc cầm quạt trúc ngang ngực để toát lên khí chất thanh lịch cổ truyền.`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    /* ============================================================
+     * RANDOMIZER (SURPRISE ME) & RESET ACTIONS
+     * ============================================================ */
+    function randomizeOutfit() {
+      // Pick random compatible items
+      const validRobes = WARDROBE.robe.filter(r => r.genderAllowed === 'both' || r.genderAllowed === state.gender);
+      const randomRobe = validRobes[Math.floor(Math.random() * validRobes.length)];
+      
+      // Filter out dangerous bottoms during surprise generation for pleasant aesthetics
+      const safeBottoms = WARDROBE.bottom.filter(b => b.safety === 'safe');
+      const randomBottom = safeBottoms[Math.floor(Math.random() * safeBottoms.length)];
+      
+      const randomAcc = WARDROBE.accessory[Math.floor(Math.random() * WARDROBE.accessory.length)];
+      const randomShoes = WARDROBE.shoes[Math.floor(Math.random() * WARDROBE.shoes.length)];
+      const randomColor = FIVE_ELEMENTS_COLORS[Math.floor(Math.random() * FIVE_ELEMENTS_COLORS.length)];
+
+      state.equipped = {
+        robe: randomRobe.id,
+        bottom: randomBottom.id,
+        accessory: randomAcc.id,
+        shoes: randomShoes.id
+      };
+      state.selectedColor = randomColor.id;
+
+      renderColorPaletteBar();
+      renderInventory();
+      updateAvatarVisuals();
+      evaluateOutfitLocally();
+    }
+
+    function resetOutfit() {
+      state.selectedColor = 'hoa';
+      state.equipped = {
+        robe: state.gender === 'male' ? 'ao_dai_nam' : 'ngu_than_tay_chen',
+        bottom: 'quan_lua_trang',
+        accessory: 'quat_truc',
+        shoes: 'sneaker_trang'
+      };
+      renderColorPaletteBar();
+      renderInventory();
+      updateAvatarVisuals();
+      evaluateOutfitLocally();
+    }
+
+    function toggleCompareMode() {
+      const section = document.getElementById('compareSection');
+      const btnText = document.getElementById('compareToggleText');
+      if (section.classList.contains('hidden')) {
+        section.classList.remove('hidden');
+        btnText.innerText = 'Đóng so sánh';
+        section.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        section.classList.add('hidden');
+        btnText.innerText = 'So sánh 2 bản';
+      }
+    }
+
+    function saveToComparison() {
+      state.comparisonSlotA = {
+        ...state.equipped,
+        color: state.selectedColor,
+        gender: state.gender,
+        score: document.getElementById('harmonyScoreText').innerText
+      };
+
+      const robeObj = WARDROBE.robe.find(r => r.id === state.comparisonSlotA.robe);
+      const bottomObj = WARDROBE.bottom.find(b => b.id === state.comparisonSlotA.bottom);
+      const accObj = WARDROBE.accessory.find(a => a.id === state.comparisonSlotA.accessory);
+      const colorObj = FIVE_ELEMENTS_COLORS.find(c => c.id === state.comparisonSlotA.color);
+
+      document.getElementById('compareScoreA').innerText = state.comparisonSlotA.score;
+      document.getElementById('compareSlotA').innerHTML = `
+        <div class="space-y-1 text-left text-neutral-800 font-medium">
+          <div class="text-sm font-bold text-[#8C1D24]">${robeObj.name}</div>
+          <div>Màu sắc: <strong>${colorObj.name}</strong></div>
+          <div>Phối dưới: <strong>${bottomObj.name}</strong></div>
+          <div>Phụ kiện: <strong>${accObj.name}</strong></div>
+        </div>
+      `;
+
+      // Open compare section if closed
+      const section = document.getElementById('compareSection');
+      if (section.classList.contains('hidden')) {
+        toggleCompareMode();
+      }
+    }
+
+    function updateLiveComparisonSlotB(score) {
+      const robeObj = WARDROBE.robe.find(r => r.id === state.equipped.robe);
+      const bottomObj = WARDROBE.bottom.find(b => b.id === state.equipped.bottom);
+      const accObj = WARDROBE.accessory.find(a => a.id === state.equipped.accessory);
+      const colorObj = FIVE_ELEMENTS_COLORS.find(c => c.id === state.selectedColor);
+
+      document.getElementById('compareScoreB').innerText = `${score}%`;
+      const slotB = document.getElementById('compareSlotB');
+      if (slotB) {
+        slotB.innerHTML = `
+          <div class="space-y-1 text-left text-neutral-800 font-medium">
+            <div class="text-sm font-bold text-[#8C1D24]">${robeObj.name}</div>
+            <div>Màu sắc: <strong>${colorObj.name}</strong></div>
+            <div>Phối dưới: <strong>${bottomObj.name}</strong></div>
+            <div>Phụ kiện: <strong>${accObj.name}</strong></div>
+          </div>
+        `;
+      }
+    }
+
+    function openLookbookModal() {
+      const modal = document.getElementById('lookbookModal');
+      const robeObj = WARDROBE.robe.find(r => r.id === state.equipped.robe);
+      const bottomObj = WARDROBE.bottom.find(b => b.id === state.equipped.bottom);
+      const eventObj = EVENTS.find(e => e.id === state.event);
+      const colorObj = FIVE_ELEMENTS_COLORS.find(c => c.id === state.selectedColor);
+
+      document.getElementById('cardRobeTitle').innerText = robeObj.name;
+      document.getElementById('cardEvent').innerText = eventObj.name;
+      document.getElementById('cardElement').innerText = colorObj.name;
+      document.getElementById('cardMix').innerText = bottomObj.name;
+
+      // Clone SVG avatar for postcard
+      const svg = document.getElementById('mannequinSvg');
+      const clone = svg.cloneNode(true);
+      clone.setAttribute('id', 'clonedMannequinSvg');
+      const replicaContainer = document.getElementById('cardAvatarReplica');
+      replicaContainer.innerHTML = '';
+      replicaContainer.appendChild(clone);
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeLookbookModal() {
+      const modal = document.getElementById('lookbookModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function downloadLookbookImage() {
+      const target = document.getElementById('captureArea');
+      const btn = document.getElementById('btnDownloadCard');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Đang tạo ảnh...`;
+      btn.disabled = true;
+
+      try {
+        const canvas = await html2canvas(target, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#FDFBF7'
+        });
+        const imgData = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `V-Phuc-Remix-${Date.now()}.png`;
+        link.href = imgData;
+        link.click();
+      } catch (err) {
+        console.error("Screenshot error", err);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    /* ============================================================
+     * PRESETS MODAL CONTROLLER
+     * ============================================================ */
+    function openPresetsModal() {
+      const list = document.getElementById('presetsList');
+      list.innerHTML = PRESETS.map((p, idx) => `
+        <div onclick="applyPreset(${idx})" class="p-3.5 rounded-2xl border border-neutral-200 hover:border-[#8C1D24] hover:bg-amber-50/50 cursor-pointer transition flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <h5 class="font-bold text-xs text-[#8C1D24]">${p.title}</h5>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">${p.gender === 'female' ? 'Nữ' : 'Nam'}</span>
+          </div>
+          <p class="text-[11px] text-neutral-600 mb-2">${p.desc}</p>
+          <div class="flex justify-end">
+            <span class="text-[10px] font-bold text-[#8C1D24] flex items-center gap-1">Áp dụng mẫu này <i class="ph-bold ph-arrow-right"></i></span>
+          </div>
+        </div>
+      `).join('');
+
+      const modal = document.getElementById('presetsModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closePresetsModal() {
+      const modal = document.getElementById('presetsModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function applyPreset(index) {
+      const p = PRESETS[index];
+      state.gender = p.gender;
+      state.event = p.event;
+      state.selectedColor = p.color;
+      state.equipped = {
+        robe: p.robe,
+        bottom: p.bottom,
+        accessory: p.accessory,
+        shoes: p.shoes
+      };
+
+      setGender(p.gender);
+      setEvent(p.event);
+      setColor(p.color);
+      closePresetsModal();
+    }
+
+    /* ============================================================
+     * SETTINGS MODAL CONTROLLER
+     * ============================================================ */
+    function openSettingsModal() {
+      document.getElementById('inputApiKey').value = state.geminiApiKey;
+      const modal = document.getElementById('settingsModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveSettings() {
+      state.geminiApiKey = document.getElementById('inputApiKey').value.trim();
+      closeSettingsModal();
+    }
+  </script>
+</body>
+</html>
